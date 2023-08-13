@@ -3,25 +3,24 @@ class Program
 {
     static void Main(string[] args)
     {
-        StartNotesApp();
-
-    }
-
-    private static void StartNotesApp(){
         Console.WriteLine("Welcome to the notes app, write 'help' for commands");
 
         IDictionary <int, string> notes = new Dictionary<int, string>();
-
-        string input = Console.ReadLine();
-
-        if (input == null)
-        {
-            Console.WriteLine("invalid input, write something");
-            StartNotesApp();
-            return;
+        bool keepRunning = true;
+        while(keepRunning){
+            keepRunning = DisplayMenu(notes);
         }
 
-        // improve error handling here;
+    }
+
+    private static bool DisplayMenu(IDictionary <int, string> notes){
+
+        string input = null;
+
+        while (input == null){
+            input = Console.ReadLine();
+        }
+
         switch (input.ToLower())
         {
             case "help":
@@ -48,10 +47,14 @@ class Program
                 DeleteAll(notes);
                 break;
 
+            case "exit":
+                return false;
+
             default:
-                Console.WriteLine("Incorrect input, see the list of available commands");
+                Console.WriteLine("Incorrect input, see the list of available commands using 'help'");
                 break;
         }
+        return true;
     }
 
     private static void PrintHelp()
