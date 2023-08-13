@@ -14,6 +14,13 @@ class Program
 
         string input = Console.ReadLine();
 
+        if (input == null)
+        {
+            Console.WriteLine("invalid input, write something");
+            StartNotesApp();
+            return;
+        }
+
         // improve error handling here;
         switch (input.ToLower())
         {
@@ -30,35 +37,60 @@ class Program
                 break;
 
             case "list":
-                ListNote(notes);
+                ListNotes(notes);
                 break;
 
             case "one":
                 RetrieveOneNote(notes);
                 break;
+
             case "deleteall":
                 DeleteAll(notes);
+                break;
+
             default:
                 Console.WriteLine("Incorrect input, see the list of available commands");
+                break;
         }
     }
 
-    private static IDictionary AddNote(IDictionary notes)
+    private static void PrintHelp()
     {
+        // commands as a string array just to learn about arrays and loops
+        string[] availableCommands = new string[] {
+            "list - shows a list of notes",
+            "delete - deletes one note using the index",
+            "add - adds one note",
+            "one - retrieves one note based on index",
+            "deleteall - deletes all notes after confirmation"};
+
+        Console.WriteLine("These are the available command");
+
+        foreach (string command in availableCommands)
+        {
+            Console.WriteLine(command);
+        }
+    }
+
+    private static IDictionary<int, string> AddNote(IDictionary<int, string> notes)
+    {
+        Console.Write("type your note here => ");
         string newNote = Console.ReadLine();
         KeyValuePair<int, string> newNoteAddition = new KeyValuePair<int, string>(notes.Count, newNote);
-        notes.add(newNoteAddition);
+        // notes.Add(newNoteAddition);
+        notes.Add(newNoteAddition.Key, newNoteAddition.Value);
 
-        Console.WriteLine("added: ", newNote);
+        Console.WriteLine("added: {0}", newNoteAddition);
         return notes;
     }
 
-    private static IDictionary DeleteNote(IDictionary notes)
+    private static IDictionary<int, string> DeleteNote(IDictionary<int, string> notes)
     {
         string input = Console.ReadLine();
+        int index;
         try
         {
-            int index = int.Parse(input);
+            index = int.Parse(input);
         }
         catch (Exception e)
         {
@@ -77,7 +109,7 @@ class Program
         return notes;
     }
 
-    private static IDictionary DeleteAll(IDictionary notes)
+    private static IDictionary<int, string> DeleteAll(IDictionary<int, string> notes)
     {
         string response = Console.ReadLine();
 
@@ -92,20 +124,21 @@ class Program
             return notes;
     }
 
-    private static void ListNotes(IDictionary notes)
+    private static void ListNotes(IDictionary<int, string> notes)
     {
         foreach (KeyValuePair<int, string> kvp in notes)
         {
-            Console.WriteLine("{0}) {1}", kvp.Key. kvp.Value);
+            Console.WriteLine("{0}) {1}", kvp.Key, kvp.Value);
         }
     }
 
-    private static void RetrieveOneNote(IDictionary notes)
+    private static void RetrieveOneNote(IDictionary<int, string> notes)
     {
         string input = Console.ReadLine();
+        int index;
         try
         {
-            int index = int.Parse(input);
+            index = int.Parse(input);
         }
         catch (Exception e)
         {
