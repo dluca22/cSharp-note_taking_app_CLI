@@ -17,10 +17,13 @@ class Program
 
         string input = null;
 
-        while (input == null){
+        do{
+            Console.WriteLine();
+            Console.Write("Type your command: ");
             input = Console.ReadLine();
-        }
+        }while (input == null);
 
+        Console.Clear();
         switch (input.ToLower())
         {
             case "help":
@@ -48,6 +51,7 @@ class Program
                 break;
 
             case "exit":
+                Console.WriteLine("Byeeeee!!");
                 return false;
 
             default:
@@ -65,7 +69,8 @@ class Program
             "delete - deletes one note using the index",
             "add - adds one note",
             "one - retrieves one note based on index",
-            "deleteall - deletes all notes after confirmation"};
+            "deleteall - deletes all notes after confirmation",
+            "exit - exits the app"};
 
         Console.WriteLine("These are the available command");
 
@@ -79,6 +84,7 @@ class Program
     {
         Console.Write("type your note here => ");
         string newNote = Console.ReadLine();
+
         KeyValuePair<int, string> newNoteAddition = new KeyValuePair<int, string>(notes.Count, newNote);
         // notes.Add(newNoteAddition);
         notes.Add(newNoteAddition.Key, newNoteAddition.Value);
@@ -89,6 +95,8 @@ class Program
 
     private static IDictionary<int, string> DeleteNote(IDictionary<int, string> notes)
     {
+        ListNotes(notes);
+        Console.Write("Type the note number to delete: ");
         string input = Console.ReadLine();
         int index;
         try
@@ -101,16 +109,33 @@ class Program
             return notes;
         }
 
-        if(notes.ContainsKey(index))
-        { // check key before removing it
+        if(notes.ContainsKey(index)) {
+            // check key before removing it
            notes.Remove(index);
-        }
-        else
-        {
+           return ShiftOrder(notes);
+        } else {
             Console.WriteLine("That note does not exist, type 'list' for all available notes");
         }
         return notes;
     }
+
+    private static IDictionary<int, string> ShiftOrder(IDictionary<int, string> notes){
+
+        var list = new List<string>();
+        foreach(var note in notes)
+        {
+            list.Add(note.Value);
+        }
+
+        var orderedList = new Dictionary<int, string>();
+        for(int i = 0; i < list.Count; i++)
+        {
+            orderedList.Add(i,list[i]);
+        }
+
+        return orderedList;
+    }
+
 
     private static IDictionary<int, string> DeleteAll(IDictionary<int, string> notes)
     {
@@ -129,14 +154,19 @@ class Program
 
     private static void ListNotes(IDictionary<int, string> notes)
     {
-        foreach (KeyValuePair<int, string> kvp in notes)
-        {
-            Console.WriteLine("{0}) {1}", kvp.Key, kvp.Value);
+        if(notes.Count == 0){
+            Console.WriteLine("== List is empty ==");
+        } else {
+            foreach (KeyValuePair<int, string> kvp in notes)
+            {
+                Console.WriteLine("{0}) {1}", kvp.Key, kvp.Value);
+            }
         }
     }
 
     private static void RetrieveOneNote(IDictionary<int, string> notes)
     {
+        Console.Write("Type index: ");
         string input = Console.ReadLine();
         int index;
         try
