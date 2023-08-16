@@ -5,6 +5,11 @@ class Program
     {
         Console.WriteLine("Welcome to the notes app, write 'help' for commands");
 
+
+        /*  notes is a global dictionary, since thye variable that gets passed around is just the reference to the dictionary,
+         not the dictionary itself, any modification to it does not have to be a return
+         and will take effect on the global instance of the notes dictionary */
+
         IDictionary <int, string> notes = new Dictionary<int, string>();
         bool keepRunning = true;
         while(keepRunning){
@@ -23,7 +28,8 @@ class Program
             input = Console.ReadLine();
         }while (input == null);
 
-        Console.Clear();
+        // clears the console if needed
+        // Console.Clear();
         switch (input.ToLower())
         {
             case "help":
@@ -31,11 +37,11 @@ class Program
                 break;
 
             case "add":
-                notes = AddNote(notes);
+                AddNote(notes);
                 break;
 
             case "delete":
-                notes = DeleteNote(notes);
+                DeleteNote(notes);
                 break;
 
             case "list":
@@ -80,7 +86,7 @@ class Program
         }
     }
 
-    private static IDictionary<int, string> AddNote(IDictionary<int, string> notes)
+    private static void AddNote(IDictionary<int, string> notes)
     {
         Console.Write("type your note here => ");
         string newNote = Console.ReadLine();
@@ -90,10 +96,9 @@ class Program
         notes.Add(newNoteAddition.Key, newNoteAddition.Value);
 
         Console.WriteLine("added: {0}", newNoteAddition);
-        return notes;
     }
 
-    private static IDictionary<int, string> DeleteNote(IDictionary<int, string> notes)
+    private static void DeleteNote(IDictionary<int, string> notes)
     {
         ListNotes(notes);
         Console.Write("Type the note number to delete: ");
@@ -106,20 +111,20 @@ class Program
         catch (Exception e)
         {
             Console.WriteLine("Incorrect input, use index numbers only");
-            return notes;
+            return;
         }
 
-        if(notes.ContainsKey(index)) {
+        if (notes.ContainsKey(index)) {
             // check key before removing it
            notes.Remove(index);
-           return ShiftOrder(notes);
+           // rewrites the order of the notes for readability and also to avoid error in new insert with conflict of Key already in use
+           ShiftOrder(notes);
         } else {
             Console.WriteLine("That note does not exist, type 'list' for all available notes");
         }
-        return notes;
     }
 
-    private static IDictionary<int, string> ShiftOrder(IDictionary<int, string> notes){
+    private static void ShiftOrder(IDictionary<int, string> notes){
 
         var list = new List<string>();
         foreach(var note in notes)
@@ -127,17 +132,16 @@ class Program
             list.Add(note.Value);
         }
 
-        var orderedList = new Dictionary<int, string>();
+        notes.Clear();
         for(int i = 0; i < list.Count; i++)
         {
-            orderedList.Add(i,list[i]);
+            notes.Add(i,list[i]);
         }
 
-        return orderedList;
     }
 
 
-    private static IDictionary<int, string> DeleteAll(IDictionary<int, string> notes)
+    private static void DeleteAll(IDictionary<int, string> notes)
     {
         string response = Console.ReadLine();
 
@@ -149,7 +153,6 @@ class Program
         else{
             Console.WriteLine("no notes were harmed.");
         }
-            return notes;
     }
 
     private static void ListNotes(IDictionary<int, string> notes)
